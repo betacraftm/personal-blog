@@ -85,3 +85,39 @@ export const signin = async (req, res) => {
 		res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message })
 	}
 }
+
+export const googleAuth = async (req, res) => {
+	try {
+		const { name, email, googlePhotoUrl } = req.body
+		const user = await User.findOne({ email })
+		if (user) {
+			const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
+			const { password, ...rest } = user._doc
+			res
+				.status(StatusCodes.OK)
+				.cookie('access_token', token, { httpOnly: true })
+				.json(rest)
+		} else {
+			const generatedPassword = Math.random().toString(36).slice(-8)
+			const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
+			const newUser = new User({
+				username:
+					name.toLowerCase().split(' ').json('') +
+					Math.random().toString(9).slice(-4),
+				email,
+				profilePicture: googlePhotoUrl,
+				password: hashedPassword,
+			})
+			await newUser.save()
+			const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET)
+			const { password, ...rest } = newUser._doc
+			res
+				.status(StatusCodes.OK)
+				.cookie('access_token', token, { httpOnly: true })
+				.json(rest)
+		}
+	} catch (error) {
+		console.log('Error in googleAuth route')
+		res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message })
+	}
+}
