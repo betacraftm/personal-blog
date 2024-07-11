@@ -7,7 +7,7 @@ export const test = (req, res) => {
 
 export const updateUser = async (req, res) => {
 	try {
-		if (req.user._id === req.params.userId) {
+		if (req.user._id !== req.params.userId) {
 			return res.status(StatusCodes.FORBIDDEN).json({ message: 'Not allowed' })
 		}
 
@@ -39,7 +39,7 @@ export const updateUser = async (req, res) => {
 					.json({ message: 'Username must be lowercase' })
 			}
 
-			if (req.body.username.match(/^[a-zA-Z0-9]+$/)) {
+			if (req.body.username.match(/[^a-zA-Z0-9]+/g)) {
 				return res
 					.status(StatusCodes.BAD_REQUEST)
 					.json({ message: 'Username can contain only letters and numbers' })
@@ -47,7 +47,7 @@ export const updateUser = async (req, res) => {
 		}
 
 		const updatedUser = await User.findByIdAndUpdate(
-			res.params.userId,
+			req.params.userId,
 			{
 				$set: {
 					username: req.body.username,
@@ -59,7 +59,7 @@ export const updateUser = async (req, res) => {
 			{ new: true }
 		)
 
-		const { password, ...rest } = updateUser._doc
+		const { password, ...rest } = updatedUser._doc
 		res.status(StatusCodes.OK).json(rest)
 	} catch (error) {
 		console.log('Error in updateUser')
