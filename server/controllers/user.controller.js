@@ -68,3 +68,17 @@ export const updateUser = async (req, res) => {
 			.json({ message: error.message })
 	}
 }
+
+export const deleteUser = async (req, res) => {
+	try {
+		if (req.user._id !== req.params.userId) {
+			return res.status(StatusCodes.FORBIDDEN).json({ message: 'Not allowed' })
+		}
+
+		await User.findByIdAndDelete(req.params.userId)
+		res.status(StatusCodes.OK).json({ message: 'User has been deleted' })
+	} catch (error) {
+		console.log('Error in delete user', error.message)
+		res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message })
+	}
+}
