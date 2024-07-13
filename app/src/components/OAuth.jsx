@@ -21,7 +21,6 @@ export default function OAuth() {
         email: result.user.email,
         googlePhotoUrl: result.user.photoURL,
       });
-      console.log(res);
       if (res.status === 200) {
         dispatch(signInSuccess(res.data));
         navigate("/");

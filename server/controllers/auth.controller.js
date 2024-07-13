@@ -102,7 +102,7 @@ export const googleAuth = async (req, res) => {
 			const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
 			const newUser = new User({
 				username:
-					name.toLowerCase().split(' ').json('') +
+					name.toLowerCase().split(' ').join('') +
 					Math.random().toString(9).slice(-4),
 				email,
 				profilePicture: googlePhotoUrl,
@@ -117,7 +117,7 @@ export const googleAuth = async (req, res) => {
 				.json(rest)
 		}
 	} catch (error) {
-		console.log('Error in googleAuth route')
+		console.log('Error in googleAuth route', error.message)
 		res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message })
 	}
 }
