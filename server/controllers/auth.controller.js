@@ -70,7 +70,11 @@ export const signin = async (req, res) => {
 		}
 
 		const token = jwt.sign(
-			{ _id: validUser._id, username: validUser.username },
+			{
+				_id: validUser._id,
+				username: validUser.username,
+				isAdmin: validUser.isAdmin,
+			},
 			process.env.JWT_SECRET
 		)
 
@@ -91,7 +95,10 @@ export const googleAuth = async (req, res) => {
 		const { name, email, googlePhotoUrl } = req.body
 		const user = await User.findOne({ email })
 		if (user) {
-			const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
+			const token = jwt.sign(
+				{ _id: user._id, isAdmin: user.isAdmin },
+				process.env.JWT_SECRET
+			)
 			const { password, ...rest } = user._doc
 			res
 				.status(StatusCodes.OK)
@@ -109,7 +116,10 @@ export const googleAuth = async (req, res) => {
 				password: hashedPassword,
 			})
 			await newUser.save()
-			const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET)
+			const token = jwt.sign(
+				{ _id: newUser._id, isAdmin: newUser.isAdmin },
+				process.env.JWT_SECRET
+			)
 			const { password, ...rest } = newUser._doc
 			res
 				.status(StatusCodes.OK)
