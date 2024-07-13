@@ -6,12 +6,28 @@ import { useSelector, useDispatch } from "react-redux";
 import { MdDashboard } from "react-icons/md";
 import { GoSignOut } from "react-icons/go";
 import { toggleTheme } from "../redux/theme/themeSlice";
+import { signOutSuccess } from "../redux/user/userSlice";
+import axios from "../api/axios";
 
 export default function Header() {
   const dispatch = useDispatch();
   const path = useLocation().pathname;
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
+
+  const handleSignOut = async () => {
+    try {
+      const res = await axios.post("/api/user/signout");
+      if (res.status !== 200) {
+        console.log(res.data);
+      } else {
+        dispatch(signOutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <Navbar className="border-b-2">
       <Link
@@ -61,7 +77,9 @@ export default function Header() {
               <Link to="/dashboard?tab=profile">Profile</Link>
             </Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item icon={GoSignOut}>Sign Out</Dropdown.Item>
+            <Dropdown.Item icon={GoSignOut} onClick={handleSignOut}>
+              Sign Out
+            </Dropdown.Item>
           </Dropdown>
         ) : (
           <Link to="/sign-in">

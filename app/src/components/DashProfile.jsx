@@ -15,6 +15,7 @@ import {
   deleteUserStart,
   deleteUserFailure,
   deleteUserSuccess,
+  signOutSuccess,
 } from "../redux/user/userSlice";
 import axios from "../api/axios";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -47,8 +48,8 @@ export default function DashProfile() {
 
     uploadTask.on(
       "state_changed",
-      (snapshot) => {
-        (error) => {
+      () => {
+        () => {
           setImageFileUploadError("Could not upload image");
           setImageFile(null);
           setImageUrl(null);
@@ -102,6 +103,19 @@ export default function DashProfile() {
       }
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const res = await axios.post("/api/user/signout");
+      if (res.status !== 200) {
+        console.log(res.data);
+      } else {
+        dispatch(signOutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -165,7 +179,9 @@ export default function DashProfile() {
         <span onClick={() => setShowModal(true)} className="cursor-pointer">
           Delete Account
         </span>
-        <span className="cursor-pointer">Sign Out</span>
+        <span className="cursor-pointer" onClick={handleSignOut}>
+          Sign Out
+        </span>
       </div>
       <Modal
         show={showModal}
