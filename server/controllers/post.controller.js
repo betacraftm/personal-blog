@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import Post from '../models/post.model'
+import Post from '../models/post.model.js'
 
 export const createPost = async (req, res) => {
 	try {
@@ -21,6 +21,13 @@ export const createPost = async (req, res) => {
 			.toLowerCase()
 			.replace(/[^a-zA-Z0-9-]/g, '')
 
+		const duplicatePost = await Post.findOne({ title: req.body.title })
+		if (duplicatePost) {
+			return res
+				.status(StatusCodes.CONFLICT)
+				.json({ message: 'This title has been used' })
+		}
+
 		const newPost = new Post({
 			...req.body,
 			slug,
@@ -28,6 +35,7 @@ export const createPost = async (req, res) => {
 		})
 
 		const savedPost = await newPost.save()
+
 		res.status(StatusCodes.CREATED).json(savedPost)
 	} catch (error) {
 		console.log('Error in create post', error.message)
