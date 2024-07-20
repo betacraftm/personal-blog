@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 export default function DashPost() {
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
+  const [showMore, setShowMore] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -15,6 +16,9 @@ export default function DashPost() {
           `/api/post/getposts?userId=${currentUser._id}`,
         );
         setUserPosts(res.data.posts);
+        if (res.data.posts.length < 9) {
+          setShowMore(false);
+        }
       } catch (error) {
         console.log(error.response.data.message);
       }
@@ -25,63 +29,88 @@ export default function DashPost() {
     }
   }, [currentUser._id]);
 
+  const handleShowMore = async () => {
+    const startIndex = userPosts.length;
+    try {
+      const res = await axios.get(
+        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`,
+      );
+      setUserPosts((prev) => [...prev, ...res.data.posts]);
+      if (res.data.posts.length < 9) {
+        setShowMore(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div className="scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500 table-auto overflow-x-scroll p-3 md:mx-auto">
+    <div className="table-auto overflow-x-scroll p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500 md:mx-auto">
       {currentUser.isAdmin && userPosts.length > 0 ? (
-        <Table hoverable className="shadow-md">
-          <Table.Head>
-            <Table.HeadCell>Date Updated</Table.HeadCell>
-            <Table.HeadCell>Post Image</Table.HeadCell>
-            <Table.HeadCell>Post Title</Table.HeadCell>
-            <Table.HeadCell>Catagory</Table.HeadCell>
-            <Table.HeadCell>Delete</Table.HeadCell>
-            <Table.HeadCell>Edit</Table.HeadCell>
-          </Table.Head>
-          <Table.Body className="divide-y">
-            {userPosts.map((post) => {
-              return (
-                <Table.Row
-                  key={post._id}
-                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                >
-                  <Table.Cell>
-                    {new Date(post.updatedAt).toLocaleDateString()}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link to={`/post/${post.slug}`}>
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="h-10 w-20 bg-gray-500 object-cover"
-                      />
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link
-                      to={`/post/${post.slug}`}
-                      className="font-medium text-gray-900 dark:text-white"
-                    >
-                      {post.title}
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>{post.category}</Table.Cell>
-                  <Table.Cell>
-                    <span className="cursor-pointer font-medium text-red-500 hover:underline">
-                      Delete
-                    </span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link to={`/update-post/${post._id}`}>
-                      <span className="text-teal-500 hover:underline">
-                        Edit
+        <div>
+          <Table hoverable className="shadow-md">
+            <Table.Head>
+              <Table.HeadCell>Date Updated</Table.HeadCell>
+              <Table.HeadCell>Post Image</Table.HeadCell>
+              <Table.HeadCell>Post Title</Table.HeadCell>
+              <Table.HeadCell>Catagory</Table.HeadCell>
+              <Table.HeadCell>Delete</Table.HeadCell>
+              <Table.HeadCell>Edit</Table.HeadCell>
+            </Table.Head>
+            <Table.Body className="divide-y">
+              {userPosts.map((post) => {
+                return (
+                  <Table.Row
+                    key={post._id}
+                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                  >
+                    <Table.Cell>
+                      {new Date(post.updatedAt).toLocaleDateString()}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Link to={`/post/${post.slug}`}>
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="h-10 w-20 bg-gray-500 object-cover"
+                        />
+                      </Link>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Link
+                        to={`/post/${post.slug}`}
+                        className="font-medium text-gray-900 dark:text-white"
+                      >
+                        {post.title}
+                      </Link>
+                    </Table.Cell>
+                    <Table.Cell>{post.category}</Table.Cell>
+                    <Table.Cell>
+                      <span className="cursor-pointer font-medium text-red-500 hover:underline">
+                        Delete
                       </span>
-                    </Link>
-                  </Table.Cell>
-                </Table.Row>
-              );
-            })}
-          </Table.Body>
-        </Table>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Link to={`/update-post/${post._id}`}>
+                        <span className="text-teal-500 hover:underline">
+                          Edit
+                        </span>
+                      </Link>
+                    </Table.Cell>
+                  </Table.Row>
+                );
+              })}
+            </Table.Body>
+          </Table>
+          {showMore && (
+            <button
+              className="w-full self-center py-7 text-sm text-teal-500"
+              onClick={handleShowMore}
+            >
+              Show more
+            </button>
+          )}
+        </div>
       ) : (
         <p>You have no post yet!</p>
       )}
