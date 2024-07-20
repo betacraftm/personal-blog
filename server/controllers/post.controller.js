@@ -108,3 +108,39 @@ export const deletePost = async (req, res) => {
 			.json({ message: error.message })
 	}
 }
+
+export const updatePost = async (req, res) => {
+	try {
+		if (!req.user.isAdmin || req.user._id !== req.params.userId) {
+			return res
+				.status(StatusCodes.FORBIDDEN)
+				.json({ message: 'You are not allowed to update this post' })
+		}
+
+		const slug = req.body.title
+			.split(' ')
+			.join('-')
+			.toLowerCase()
+			.replace(/[^a-zA-Z0-9-]/g, '')
+
+		const updatedPost = await Post.findByIdAndUpdate(
+			req.params.postId,
+			{
+				$set: {
+					title: req.body.title,
+					content: req.body.content,
+					category: req.body.category,
+					image: req.body.image,
+					slug,
+				},
+			},
+			{ new: true }
+		)
+		res.status(StatusCodes.OK).json(updatedPost)
+	} catch (error) {
+		console.log('Error in updatePost', error.message)
+		res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: error.message })
+	}
+}
