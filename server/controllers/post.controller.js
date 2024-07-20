@@ -90,3 +90,21 @@ export const getPosts = async (req, res) => {
 			.json({ message: error.message })
 	}
 }
+
+export const deletePost = async (req, res) => {
+	try {
+		if (!req.user.isAdmin || req.user._id !== req.params.userId) {
+			return res
+				.status(StatusCodes.FORBIDDEN)
+				.json({ message: 'You are not allowed to delete this post' })
+		}
+
+		await Post.findByIdAndDelete(req.params.postId)
+		res.status(StatusCodes.OK).json({ message: 'The post has been deleted' })
+	} catch (error) {
+		console.log('Error in delete post', error.message)
+		res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: error.message })
+	}
+}
