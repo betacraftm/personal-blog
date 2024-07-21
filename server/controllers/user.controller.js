@@ -96,3 +96,51 @@ export const signout = (req, res) => {
 			.json({ message: error.message })
 	}
 }
+
+export const getUsers = async (req, res) => {
+	if (!req.user.isAdmin) {
+		return res
+			.status(StatusCodes.FORBIDDEN)
+			.json({ message: 'You are not allowed to see all users' })
+	}
+	try {
+		const startIndex = parseInt(req.query.startIndex) || 0
+		const limit = parseInt(req.query.limit) || 9
+		const sortDirection = req.query.sort === 'asc' ? 1 : -1
+
+		const users = await User.find()
+			.sort({ createdAt: sortDirection })
+			.skip(startIndex)
+			.limit(limit)
+
+		const userWithOutPassword = users.map((user) => {
+			const { password, ...rest } = user._doc
+			return rest
+		})
+
+		const totalUser = await User.countDocuments()
+
+		const now = new Date()
+
+		const oneMonthAgo = new Date(
+			now.getFullYear(),
+			now.getMonth() - 1,
+			now.getDate()
+		)
+
+		const lastMonthUser = await User.countDocuments({
+			createdAt: { $gte: oneMonthAgo },
+		})
+
+		res.status(StatusCodes.OK).json({
+			user: userWithOutPassword,
+			totalUser,
+			lastMonthUser,
+		})
+	} catch (error) {
+		console.log('Error in getUsers', error.message)
+		res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: error.message })
+	}
+}
