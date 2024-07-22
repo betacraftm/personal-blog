@@ -48,15 +48,16 @@ export const getPosts = async (req, res) => {
 		const startIndex = parseInt(req.query.startIndex) || 0
 		const limit = parseInt(req.query.limit) || 9
 		const sortDirection = req.query.order === 'asc' ? 1 : -1
+		const { userId, category, slug, postId, searchTerm } = req.query
 		const posts = await Post.find(
-			req.query.userId && { userId: req.query.userId },
-			req.query.category && { category: req.query.category },
-			req.query.slug && { slug: req.query.slug },
-			req.query.postId && { _id: req.query.postId },
-			req.query.searchTerm && {
+			slug && { slug },
+			userId && { userId },
+			category && { category },
+			postId && { _id: postId },
+			searchTerm && {
 				$or: [
-					{ title: { $regex: req.query.searchTerm, $option: 'i' } },
-					{ content: { $regex: req.query.searchTerm, $option: 'i' } },
+					{ title: { $regex: searchTerm, $option: 'i' } },
+					{ content: { $regex: searchTerm, $option: 'i' } },
 				],
 			}
 		)
@@ -77,6 +78,12 @@ export const getPosts = async (req, res) => {
 		const lastMonthPosts = await Post.countDocuments({
 			createdAt: { $gte: oneMonthAgo },
 		})
+
+		if (posts.length === 0) {
+			return res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: "Post didn't exsist" })
+		}
 
 		res.status(StatusCodes.OK).json({
 			posts,

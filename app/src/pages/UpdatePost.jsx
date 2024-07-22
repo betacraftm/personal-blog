@@ -20,7 +20,11 @@ export default function UpdatePost() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    title: "",
+    category: "",
+    content: "",
+  });
   const [publishError, setPublishError] = useState(null);
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
@@ -105,13 +109,13 @@ export default function UpdatePost() {
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
-            value={formData.title}
+            value={formData && formData?.title}
           />
           <Select
             onChange={(e) =>
               setFormData({ ...formData, category: e.target.value })
             }
-            value={formData.category}
+            value={formData && formData?.category}
           >
             <option value="uncategorized">Select a category</option>
             <option value="javascript">Javascript</option>
@@ -162,7 +166,7 @@ export default function UpdatePost() {
           onChange={(value) => {
             setFormData({ ...formData, content: value });
           }}
-          value={formData.content}
+          value={formData && formData?.content}
         />
         <Button type="submit" gradientDuoTone="purpleToPink">
           Update
