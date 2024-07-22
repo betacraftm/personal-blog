@@ -133,7 +133,7 @@ export const getUsers = async (req, res) => {
 		})
 
 		res.status(StatusCodes.OK).json({
-			user: userWithOutPassword,
+			users: userWithOutPassword,
 			totalUser,
 			lastMonthUser,
 		})
