@@ -48,7 +48,7 @@ export default function DashUser() {
   const handleDeleteUser = async () => {
     setShowModal(false);
     try {
-      await axios.delete(`/api/user/deleteuser/${userId}/${currentUser._id}`);
+      await axios.delete(`/api/user/delete/${userId}`);
       setUsers((prev) => prev.filter((user) => user._id !== userId));
     } catch (error) {
       console.log(error);

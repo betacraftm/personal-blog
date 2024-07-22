@@ -71,7 +71,7 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
 	try {
-		if (req.user._id !== req.params.userId) {
+		if (!req.user.isAdmin && req.user._id !== req.params.userId) {
 			return res.status(StatusCodes.FORBIDDEN).json({ message: 'Not allowed' })
 		}
 
