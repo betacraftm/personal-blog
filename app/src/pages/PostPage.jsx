@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "../api/axios";
 import { Button, Spinner } from "flowbite-react";
+import CommentSection from "../components/CommentSection";
 
 export default function PostPage() {
   const { postSlug } = useParams();
@@ -72,6 +73,7 @@ export default function PostPage() {
             className="post-content mx-auto w-full max-w-3xl py-3"
             dangerouslySetInnerHTML={{ __html: post?.content }}
           ></div>
+          <CommentSection postId={post._id} />
         </>
       )}
     </main>
