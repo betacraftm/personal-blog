@@ -1,9 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import bcryptjs from 'bcryptjs'
 import User from '../models/user.model.js'
-export const test = (req, res) => {
-	res.json({ message: 'Hello World' })
-}
 
 export const updateUser = async (req, res) => {
 	try {
@@ -139,6 +136,24 @@ export const getUsers = async (req, res) => {
 		})
 	} catch (error) {
 		console.log('Error in getUsers', error.message)
+		res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: error.message })
+	}
+}
+
+export const getUser = async (req, res) => {
+	try {
+		const user = await User.findById(req.params.userId)
+		if (!user) {
+			return res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: 'User not found' })
+		}
+		const { password, ...rest } = user._doc
+		res.status(StatusCodes.OK).json(rest)
+	} catch (error) {
+		console.log(`Error in getUser ${error.message}`)
 		res
 			.status(StatusCodes.INTERNAL_SERVER_ERROR)
 			.json({ message: error.message })

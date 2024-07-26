@@ -1,13 +1,15 @@
 import { Alert, Button, Textarea } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "../api/axios";
+import Comment from "./Comment";
 
 export default function CommentSection({ postId }) {
   const { currentUser } = useSelector((state) => state.user);
   const [comment, setComment] = useState("");
   const [commentError, setCommentError] = useState(null);
+  const [comments, setComments] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (comment.length > 200) {
@@ -22,6 +24,7 @@ export default function CommentSection({ postId }) {
       if (res.status === 201) {
         setComment("");
         setCommentError(null);
+        setComments([res.data, ...comments]);
       }
     } catch (error) {
       console.log(error);
@@ -29,6 +32,18 @@ export default function CommentSection({ postId }) {
       setCommentError(error.response.data.message);
     }
   };
+
+  useEffect(() => {
+    const getComments = async () => {
+      try {
+        const res = await axios.get(`/api/comment/getPostComments/${postId}`);
+        setComments(res.data);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    };
+    getComments();
+  }, [postId]);
 
   return (
     <div className="mx-auto w-full max-w-2xl p-3">
@@ -81,6 +96,21 @@ export default function CommentSection({ postId }) {
             </Alert>
           )}
         </form>
+      )}
+      {comments.length === 0 ? (
+        <p className="my-5 text-sm">No comments yet!</p>
+      ) : (
+        <>
+          <div className="my-5 flex items-center gap-1 text-sm">
+            <p>Comments</p>
+            <div className="rounded-sm border border-gray-400 px-2 py-1">
+              <p>{comments.length}</p>
+            </div>
+          </div>
+          {comments.map((c) => {
+            return <Comment key={c._id} comment={c} />;
+          })}
+        </>
       )}
     </div>
   );

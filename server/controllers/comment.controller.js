@@ -32,3 +32,17 @@ export const createComment = async (req, res) => {
 			.json({ message: error.message })
 	}
 }
+
+export const getPostComments = async (req, res) => {
+	try {
+		const comment = await Comment.find({ postId: req.params.postId }).sort({
+			createdAt: -1,
+		})
+		res.status(StatusCodes.OK).json(comment)
+	} catch (error) {
+		console.log('Error in getPostComments', error.message)
+		res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: error.message })
+	}
+}
