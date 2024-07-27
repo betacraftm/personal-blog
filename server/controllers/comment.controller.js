@@ -46,3 +46,29 @@ export const getPostComments = async (req, res) => {
 			.json({ message: error.message })
 	}
 }
+
+export const likeComment = async (req, res) => {
+	try {
+		const comment = await Comment.findById(req.params.commentId)
+		if (!comment) {
+			return res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: 'Comment not found' })
+		}
+		const userIndex = comment.likes.indexOf(req.user._id)
+		if (userIndex === -1) {
+			comment.numberOfLikes += 1
+			comment.likes.push(req.user._id)
+		} else {
+			comment.numberOfLikes -= 1
+			comment.likes.splice(userIndex, 1)
+		}
+		await comment.save()
+		res.status(StatusCodes.OK).json(comment)
+	} catch (error) {
+		console.log('Error in likeComment', error.message)
+		res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: error.message })
+	}
+}
