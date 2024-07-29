@@ -72,3 +72,33 @@ export const likeComment = async (req, res) => {
 			.json({ message: error.message })
 	}
 }
+
+export const editComment = async (req, res) => {
+	try {
+		const comment = await Comment.findById(req.params.commentId)
+		if (!comment) {
+			return res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: 'Comment not found' })
+		}
+
+		if (comment.userId !== req.user.id && !req.user.isAdmin) {
+			return res
+				.status(StatusCodes.FORBIDDEN)
+				.json({ message: 'You are not allowed to edit this comment' })
+		}
+
+		const editedComment = await Comment.findByIdAndUpdate(
+			req.params.commentId,
+			{ content: req.body.content },
+			{ new: true }
+		)
+
+		res.status(StatusCodes.OK).json(editedComment)
+	} catch (error) {
+		console.log('Error in editComment', error.message)
+		res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: error.message })
+	}
+}
