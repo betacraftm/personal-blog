@@ -102,3 +102,29 @@ export const editComment = async (req, res) => {
 			.json({ message: error.message })
 	}
 }
+
+export const deleteComment = async (req, res) => {
+	try {
+		const comment = await Comment.findById(req.params.commentId)
+		if (!comment) {
+			return res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: 'Comment not found' })
+		}
+
+		if (comment.userId !== req.user.id && !req.user.isAdmin) {
+			return res
+				.status(StatusCodes.FORBIDDEN)
+				.json({ message: 'You are not allowed to delete this comment' })
+		}
+
+		await Comment.findByIdAndDelete(req.params.commentId)
+
+		res.status(StatusCodes.OK).json('Comment has been deleted')
+	} catch (error) {
+		console.log('Error in deleteComment', error.message)
+		res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: error.message })
+	}
+}
