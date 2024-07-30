@@ -6,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import axios from "../api/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { signOutSuccess } from "../redux/user/userSlice";
+import { FaComments } from "react-icons/fa";
 
 export default function DashSidebar() {
   const { currentUser } = useSelector((state) => state.user);
@@ -68,6 +69,18 @@ export default function DashSidebar() {
                 as="div"
               >
                 Users
+              </Sidebar.Item>
+            </Link>
+          )}
+
+          {currentUser.isAdmin && (
+            <Link to="/dashboard?tab=comments">
+              <Sidebar.Item
+                active={tab === "comments"}
+                icon={FaComments}
+                as="div"
+              >
+                Comments
               </Sidebar.Item>
             </Link>
           )}

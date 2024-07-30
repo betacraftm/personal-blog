@@ -128,3 +128,40 @@ export const deleteComment = async (req, res) => {
 			.json({ message: error.message })
 	}
 }
+
+export const getComments = async (req, res) => {
+	try {
+		if (!req.user.isAdmin) {
+			return res
+				.status(StatusCodes.FORBIDDEN)
+				.json({ message: 'You are not allowed to get all comments' })
+		}
+
+		const startIndex = parseInt(req.query.startIndex) || 0
+		const limit = parseInt(req.query.limit) || 9
+		const sortDirection = req.query.sort === 'asc' ? 1 : -1
+		const comments = await Comment.find()
+			.sort({ createdAt: sortDirection })
+			.skip(startIndex)
+			.limit(limit)
+		const totalComments = await Comment.countDocuments()
+		const now = new Date()
+		const oneMonthAgo = new Date(
+			now.getFullYear(),
+			now.getMonth() - 1,
+			now.getDate()
+		)
+		const lastMonthComments = await Comment.countDocuments({
+			createdAt: { $gte: oneMonthAgo },
+		})
+
+		res
+			.status(StatusCodes.OK)
+			.json({ comments, totalComments, lastMonthComments })
+	} catch (error) {
+		console.log('Error in getComments', error.message)
+		res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: error.message })
+	}
+}
