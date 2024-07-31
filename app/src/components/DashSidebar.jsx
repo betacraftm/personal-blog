@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import axios from "../api/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { signOutSuccess } from "../redux/user/userSlice";
-import { FaComments } from "react-icons/fa";
+import { FaComments, FaChartPie } from "react-icons/fa";
 
 export default function DashSidebar() {
   const { currentUser } = useSelector((state) => state.user);
@@ -38,6 +38,18 @@ export default function DashSidebar() {
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
         <Sidebar.ItemGroup className="flex flex-col gap-1">
+          {currentUser.isAdmin && (
+            <Link to="/dashboard?tab=dashboard">
+              <Sidebar.Item
+                active={tab === "dashboard"}
+                icon={FaChartPie}
+                as="div"
+              >
+                Dashboard
+              </Sidebar.Item>
+            </Link>
+          )}
+
           <Link to="/dashboard?tab=profile">
             <Sidebar.Item
               active={tab === "profile"}
