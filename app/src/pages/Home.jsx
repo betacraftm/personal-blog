@@ -35,7 +35,7 @@ export default function Home() {
       </div>
 
       <h2 className="mb-5 text-center text-2xl font-semibold">Recent Posts</h2>
-      <div className="mx-auto flex max-w-6xl flex-col flex-wrap justify-center gap-8 p-3 py-7 sm:flex-row">
+      <div className="mx-auto grid w-full grid-cols-1 gap-8 p-3 py-7 md:max-w-3xl md:grid-cols-2 2xl:max-w-6xl 2xl:grid-cols-3">
         {posts &&
           posts.length > 0 &&
           posts.map((post) => {

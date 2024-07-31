@@ -51,12 +51,14 @@ export const getPosts = async (req, res) => {
 		const posts = await Post.find({
 			...(req.query.slug && { slug: req.query.slug }),
 			...(req.query.userId && { userId: req.query.userId }),
-			...(req.query.category && { category: req.query.category }),
+			...(req.query.category && {
+				category: new RegExp(req.query.category, 'i'),
+			}),
 			...(req.query.postId && { _id: req.query.postId }),
 			...(req.query.searchTerm && {
 				$or: [
-					{ title: { $regex: req.query.searchTerm, $option: 'i' } },
-					{ content: { $regex: req.query.searchTerm, $option: 'i' } },
+					{ title: new RegExp(req.query.searchTerm, 'i') },
+					{ content: new RegExp(req.query.searchTerm, 'i') },
 				],
 			}),
 		})
