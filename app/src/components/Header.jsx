@@ -57,28 +57,30 @@ export default function Header() {
         </span>
         Blog
       </Link>
-      <form onSubmit={handleSubmit}>
+
+      <form onSubmit={handleSubmit} className="max-w-40 lg:max-w-full">
         <TextInput
           type="text"
           placeholder="Search..."
           rightIcon={AiOutlineSearch}
-          className="hidden lg:inline"
+          className="hidden md:inline"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </form>
-      <Button className="h-10 w-12 lg:hidden" color="gray" pill>
-        <AiOutlineSearch />
-      </Button>
 
       <div className="flex gap-2 md:order-2">
         <Button
-          className="hidden h-10 w-12 sm:inline"
+          className="inline h-10 w-12"
           color="gray"
           pill
           onClick={() => dispatch(toggleTheme())}
         >
-          {theme === "light" ? <FaSun /> : <FaMoon />}
+          {theme === "light" ? (
+            <FaSun className="text-base" />
+          ) : (
+            <FaMoon className="text-base" />
+          )}
         </Button>
         {currentUser ? (
           <Dropdown
@@ -112,6 +114,15 @@ export default function Header() {
       </div>
 
       <Navbar.Collapse>
+        <form onSubmit={handleSubmit} className="mb-4 md:hidden">
+          <TextInput
+            type="text"
+            placeholder="Search..."
+            rightIcon={AiOutlineSearch}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </form>
         <Navbar.Link active={path === "/"} as={"div"}>
           <Link to="/">Home</Link>
         </Navbar.Link>

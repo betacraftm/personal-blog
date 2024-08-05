@@ -40,14 +40,23 @@ export default function PostPage() {
   useEffect(() => {
     try {
       const fetchRecentPosts = async () => {
-        const res = await axios(`api/post/getposts?limit=3`);
-        setRecentPosts(res.data.posts);
+        const res = await axios(`api/post/getposts?limit=4`);
+        const filterPosts = res.data.posts.filter(
+          (post) => post.slug !== postSlug,
+        );
+        if (filterPosts.length === 4) {
+          filterPosts.pop();
+          setRecentPosts(filterPosts);
+        } else {
+          setRecentPosts(filterPosts);
+        }
+        // setRecentPosts(res.data.posts);
       };
       fetchRecentPosts();
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [postSlug]);
 
   if (loading)
     return (
