@@ -50,7 +50,6 @@ export default function PostPage() {
         } else {
           setRecentPosts(filterPosts);
         }
-        // setRecentPosts(res.data.posts);
       };
       fetchRecentPosts();
     } catch (error) {
@@ -71,7 +70,7 @@ export default function PostPage() {
           Post didn't exsist (404 Not Found)
         </h1>
       ) : (
-        <>
+        <article>
           <h1 className="mx-auto mt-10 max-w-2xl py-3 text-center font-serif text-3xl lg:text-4xl">
             {post?.title}
           </h1>
@@ -107,7 +106,7 @@ export default function PostPage() {
                 ))}
             </div>
           </div>
-        </>
+        </article>
       )}
     </main>
   );

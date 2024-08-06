@@ -21,6 +21,19 @@ export default function CreatePost() {
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const navigate = useNavigate();
+  const toolbarOptions = [
+    [{ font: [] }],
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ["bold", "italic", "underline", "link", "code-block"],
+    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+    [{ indent: "-1" }, { indent: "+1" }, { align: [] }],
+    [{ color: [] }, { background: [] }],
+    ["clean"],
+  ];
+
+  const module = {
+    toolbar: toolbarOptions,
+  };
 
   const handleUploadImage = async () => {
     try {
@@ -70,6 +83,8 @@ export default function CreatePost() {
       setPublishError(error.response.data.message);
     }
   };
+
+  console.log(formData);
 
   return (
     <div className="mx-auto min-h-screen max-w-3xl p-3">
@@ -133,6 +148,7 @@ export default function CreatePost() {
           />
         )}
         <ReactQuill
+          modules={module}
           theme="snow"
           placeholder="Write something..."
           className="mb-12 h-72"
