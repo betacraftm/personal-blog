@@ -82,7 +82,10 @@ export const signin = async (req, res) => {
 
 		res
 			.status(StatusCodes.OK)
-			.cookie('access_token', token, { httpOnly: true })
+			.cookie('access_token', token, {
+				httpOnly: true,
+				maxAge: 24 * 60 * 60 * 1000,
+			})
 			.json(rest)
 	} catch (error) {
 		console.log('Error in signin route')
@@ -102,7 +105,10 @@ export const googleAuth = async (req, res) => {
 			const { password, ...rest } = user._doc
 			res
 				.status(StatusCodes.OK)
-				.cookie('access_token', token, { httpOnly: true })
+				.cookie('access_token', token, {
+					httpOnly: true,
+					maxAge: 24 * 60 * 60 * 1000,
+				})
 				.json(rest)
 		} else {
 			const generatedPassword = Math.random().toString(36).slice(-8)
@@ -123,7 +129,10 @@ export const googleAuth = async (req, res) => {
 			const { password, ...rest } = newUser._doc
 			res
 				.status(StatusCodes.OK)
-				.cookie('access_token', token, { httpOnly: true })
+				.cookie('access_token', token, {
+					httpOnly: true,
+					maxAge: 24 * 60 * 60 * 1000,
+				})
 				.json(rest)
 		}
 	} catch (error) {
