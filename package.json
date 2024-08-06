@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "nodemon server/server",
-		"start": "node server/server"
+		"start": "node server/server",
+		"build": "npm install && npm install --prefix app && npm run build --prefix app"
 	},
 	"keywords": [],
 	"author": "",

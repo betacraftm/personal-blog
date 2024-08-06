@@ -11,8 +11,11 @@ import cors from 'cors'
 import corsOptions from './config/corsOption.config.js'
 import cookieParser from 'cookie-parser'
 dotenv.config()
+import path from 'path'
+
 connectDB()
 const app = express()
+const __dirname = path.resolve()
 app.use(credentials)
 app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: false }))
@@ -22,6 +25,10 @@ app.use('/api/user', userRoute)
 app.use('/api/auth', authRoute)
 app.use('/api/post', postRoute)
 app.use('/api/comment', commentRoute)
+app.use(express.static(path.join(__dirname, '/app/dist')))
+app.get('*', (req, res) => {
+	res.sendFile(path.join(__dirname, 'app', 'dist', 'index.html'))
+})
 
 mongoose.connection.once('open', () => {
 	console.log('Connected to DB')
