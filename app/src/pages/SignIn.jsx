@@ -46,10 +46,8 @@ export default function SignIn() {
             Blog
           </Link>
           <p className="mt-5 text-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque
-            corrupti odit doloremque quam officia illo ab. Doloribus facilis
-            nesciunt, sapiente voluptates repudiandae eum harum iure ea facere,
-            maxime debitis ex.
+            This is a demo project. You can sign in with your email and password
+            or with Google.
           </p>
         </div>
 

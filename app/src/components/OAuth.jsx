@@ -1,7 +1,7 @@
 import { Button } from "flowbite-react";
 import { AiFillGoogleCircle } from "react-icons/ai";
-import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
-import { app } from "../firebase";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../firebase";
 import axios from "../api/axios";
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/user/userSlice";
@@ -10,10 +10,8 @@ import { useNavigate } from "react-router-dom";
 export default function OAuth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const auth = getAuth(app);
-  const handleGoogleClick = async () => {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
+
+  const handleGoogleAuth = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const res = await axios.post("/api/auth/google", {
@@ -26,7 +24,7 @@ export default function OAuth() {
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.message);
     }
   };
 
@@ -35,7 +33,7 @@ export default function OAuth() {
       type="button"
       gradientDuoTone="pinkToOrange"
       outline
-      onClick={handleGoogleClick}
+      onClick={handleGoogleAuth}
     >
       <AiFillGoogleCircle className="mr-2 h-6 w-6" />
       Continue with Google
