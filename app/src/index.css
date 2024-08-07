@@ -40,6 +40,10 @@ body {
   overflow-x: scroll;
 }
 
+.post-content pre::-webkit-scrollbar {
+  display: none;
+}
+
 .post-content code {
   background-color: #384152 !important;
   color: lawngreen !important;
