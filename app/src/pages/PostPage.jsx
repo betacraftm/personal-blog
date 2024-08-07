@@ -75,7 +75,7 @@ export default function PostPage() {
             {post?.title}
           </h1>
           <Link
-            className="mt-5 self-center"
+            className="mt-5 self-center justify-self-center"
             to={`/search?category=${post?.category.toLowerCase()}`}
           >
             <Button color="gray" pill size="xs">

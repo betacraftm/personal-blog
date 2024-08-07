@@ -14,7 +14,7 @@ export default function PostCard({ post }) {
         />
       </Link>
       <div className="flex-col gap-2 p-3">
-        <p className="line-clamp-2 text-lg font-semibold">{post.title}</p>
+        <p className="line-clamp-1 text-lg font-semibold">{post.title}</p>
         <span className="text-sm italic">{post.category}</span>
         <Link
           to={`/post/${post.slug}`}
