@@ -37,6 +37,7 @@ body {
   border-radius: 0.375rem;
   padding: 1rem;
   color: lawngreen;
+  overflow-x: scroll;
 }
 
 .post-content code {
