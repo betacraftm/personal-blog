@@ -39,6 +39,11 @@ body {
   color: lawngreen;
 }
 
+.post-content code {
+  background-color: #384152;
+  color: lawngreen;
+}
+
 .post-content a:hover {
   text-decoration: underline;
 }
