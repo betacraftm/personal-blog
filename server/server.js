@@ -25,10 +25,10 @@ app.use('/api/user', userRoute)
 app.use('/api/auth', authRoute)
 app.use('/api/post', postRoute)
 app.use('/api/comment', commentRoute)
-app.use(express.static(path.join(__dirname, '/app/dist')))
-app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname, 'app', 'dist', 'index.html'))
-})
+// app.use(express.static(path.join(__dirname, '/app/dist')))
+// app.get('*', (req, res) => {
+// 	res.sendFile(path.join(__dirname, 'app', 'dist', 'index.html'))
+// })
 
 mongoose.connection.once('open', () => {
 	console.log('Connected to DB')
