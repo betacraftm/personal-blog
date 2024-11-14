@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://personal-blog-lh7z.onrender.com";
+const BASE_URL = "http://localhost:8904";
 
 export default axios.create({
   baseURL: BASE_URL,
