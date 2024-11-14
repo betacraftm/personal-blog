@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import Comment from '../models/comment.model.js'
+import Post from '../models/post.model.js'
 
 export const createComment = async (req, res) => {
 	try {
@@ -14,6 +15,14 @@ export const createComment = async (req, res) => {
 			return res
 				.status(StatusCodes.BAD_REQUEST)
 				.json({ message: 'Comment is not allowed to be empty' })
+		}
+
+		const foundPost = await Post.findById(postId)
+
+		if (!foundPost) {
+			return res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: "Post doesn't exsist" })
 		}
 
 		const newComment = Comment({

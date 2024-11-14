@@ -43,21 +43,27 @@ export const updateUser = async (req, res) => {
 			}
 		}
 
-		const updatedUser = await User.findByIdAndUpdate(
-			req.params.userId,
-			{
-				$set: {
-					username: req.body.username,
-					email: req.body.email,
-					profilePicture: req.body.profilePicture,
-					password: req.body.password,
-				},
-			},
-			{ new: true }
-		)
+		const foundUser = await User.findById(req.params.userId)
 
-		const { password, ...rest } = updatedUser._doc
-		res.status(StatusCodes.OK).json(rest)
+		if (!foundUser) {
+			res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' })
+		} else {
+			const updatedUser = await User.updateOne(
+				foundUser,
+				{
+					$set: {
+						username: req.body.username,
+						email: req.body.email,
+						profilePicture: req.body.profilePicture,
+						password: req.body.password,
+					},
+				},
+				{ new: true }
+			)
+
+			const { password, ...rest } = updatedUser._doc
+			res.status(StatusCodes.OK).json(rest)
+		}
 	} catch (error) {
 		console.log('Error in updateUser')
 		res
@@ -71,9 +77,13 @@ export const deleteUser = async (req, res) => {
 		if (!req.user.isAdmin && req.user._id !== req.params.userId) {
 			return res.status(StatusCodes.FORBIDDEN).json({ message: 'Not allowed' })
 		}
-
-		await User.findByIdAndDelete(req.params.userId)
-		res.status(StatusCodes.OK).json({ message: 'User has been deleted' })
+		const foundUser = await User.findById(req.params.userId)
+		if (!foundUser) {
+			res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' })
+		} else {
+			await User.deleteOne(foundUser)
+			res.status(StatusCodes.OK).json({ message: 'User has been deleted' })
+		}
 	} catch (error) {
 		console.log('Error in delete user', error.message)
 		res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message })

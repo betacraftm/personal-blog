@@ -107,8 +107,15 @@ export const deletePost = async (req, res) => {
 				.json({ message: 'You are not allowed to delete this post' })
 		}
 
-		await Post.findByIdAndDelete(req.params.postId)
-		res.status(StatusCodes.OK).json({ message: 'The post has been deleted' })
+		const foundPost = await Post.findById(req.params.postId)
+		if (!foundPost) {
+			res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: "Can't found the post with matched id to delete" })
+		} else {
+			await Post.deleteOne(foundPost)
+			res.status(StatusCodes.OK).json({ message: 'The post has been deleted' })
+		}
 	} catch (error) {
 		console.log('Error in delete post', error.message)
 		res
