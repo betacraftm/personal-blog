@@ -6,16 +6,16 @@ import userRoute from './routes/user.routes.js'
 import authRoute from './routes/auth.routes.js'
 import postRoute from './routes/post.routes.js'
 import commentRoute from './routes/comment.route.js'
+import { logger } from './middlewares/logEvent.middleware.js'
 import credentials from './middlewares/credentials.middleware.js'
 import cors from 'cors'
 import corsOptions from './config/corsOption.config.js'
 import cookieParser from 'cookie-parser'
 dotenv.config()
-import path from 'path'
 
 connectDB()
 const app = express()
-const __dirname = path.resolve()
+app.use(logger)
 app.use(credentials)
 app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: false }))
